@@ -7,6 +7,11 @@ from pydantic import Field
 
 import mcp.types as types
 
+
+def some_api_call(param1: str, param2: float) -> str:
+    # Simulate an API call
+    return f"API called with {param1} and {param2}"
+
 mcp = FastMCP("Echo Server", port=3000, stateless_http=True, debug=True)
 
 
@@ -27,6 +32,19 @@ def get_greeting(
     name: str,
 ) -> str:
     return f"Hello, {name}!"
+
+
+@mcp.tool(
+    title="Your Tool Name",
+    description="Tool Description for the LLM",
+)
+async def new_tool(
+    tool_param1: str = Field(description="The description of the param1 for the LLM"), 
+    tool_param2: float = Field(description="The description of the param2 for the LLM") 
+)-> str:
+    """The new tool underlying method"""
+    result = await some_api_call(tool_param1, tool_param2)
+    return result
 
 
 @mcp.prompt("")
